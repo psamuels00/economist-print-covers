@@ -1,0 +1,31 @@
+{
+  "name": "economist",
+  "version": "1.0.0",
+  "description": "Make copy and single index of all Economist cover images.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psamuels00/economist.git"
+  },
+  "keywords": [
+    "economist"
+  ],
+  "author": "Perrin Samuels <perrin.samuels@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/psamuels00/economist/issues"
+  },
+  "homepage": "https://github.com/psamuels00/economist#readme"
+}
