@@ -77,17 +77,21 @@ Vagrant.configure("2") do |config|
         echo '. ~/set_prompt.sh yellow bright underscore bright' >> ~vagrant/.bashrc
     fi
 
+    # Vim setup
+    cp -r /vagrant/vagrant-files/.vim* ~/
+    cp -r /vagrant/vagrant-files/.vim* ~vagrant/
+    chown -R vagrant:vagrant ~vagrant/.vim*
+
+    # Git setup
+    cp  /vagrant/vagrant-files/.gitconfig ~vagrant/
+    cp  /vagrant/vagrant-files/id_rsa ~vagrant/.ssh/
+    chown vagrant:vagrant ~vagrant/.gitconfig ~vagrant/.ssh/id_rsa
+
     # Initial directory
     if ! grep -q 'cd /vagrant' ~vagrant/.bashrc; then
         echo >> ~vagrant/.bashrc
         echo 'cd /vagrant' >> ~vagrant/.bashrc
     fi
-
-    # Vim
-    #apt-get install -y vim
-    cp -r /vagrant/vagrant-files/.vim* ~/
-    cp -r /vagrant/vagrant-files/.vim* ~vagrant/
-    chown -R vagrant:vagrant ~vagrant/.vim*
 
     # Node and npm
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
@@ -102,24 +106,5 @@ Vagrant.configure("2") do |config|
     # PhantomJS and Phantom
     npm install phantom --save
     apt-get install -y fontconfig
-
-    # ---------------------
-
-    # Jshint
-    #npm install -g jshint
-
-    # Grunt
-    #npm install -g grunt-cli
-
-    # # Perl
-    # apt-get install -y libwww-perl
-    # apt-get install -y perl-doc
-
-    # # Apache
-    # apt-get install -y apache2
-    # if ! [ -L /var/www/html ]; then
-    #   rm -rf /var/www/html
-    #   ln -sf /vagrant /var/www/html
-    # fi
   SHELL
 end
