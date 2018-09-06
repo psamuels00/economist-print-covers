@@ -1,3 +1,9 @@
+# Vi temporary files
+*.swp
+
+# Vagrant vm
+.vagrant
+
 # Logs
 logs
 *.log
