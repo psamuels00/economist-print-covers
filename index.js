@@ -9,13 +9,14 @@
 // set up project structure with sample function and test suite
 // --------------------------------------------------------------------------------
 // v0.2.0
+// fetch index page for current year and display thumbnail image url for each edition
+//
 // fetch index page for current year
 // for each edition in index page do
-//     fetch and save thumbnail image
+//     display thumbnail image url
 // done
-// generate and save comprehensive index page for current year based on saved images
 // --------------------------------------------------------------------------------
 
-var economist = require('./lib/economist.js');
+const economist = require('./lib/economist.js');
 economist.run();
 

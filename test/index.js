@@ -2,13 +2,13 @@ var economist = require('../lib/economist.js');
 var expect = require('chai').expect;
 
 describe('Test Suite 1', function(){
-    it('should return 1', function() {
-        expect(economist.step1()).to.equal(1);
+    it('should return empty string', function() {
+        expect(economist.ymdAtEot('')).to.equal('');
     });
-    it('should return 2', function() {
-        expect(economist.step2()).to.equal(2);
+    it('should return a date 1', function() {
+        expect(economist.ymdAtEot('/2018-09-05')).to.equal('2018-09-05');
     });
-    it('should return 3', function() {
-        expect(economist.step3()).to.equal(3);
+    it('should return a date 2', function() {
+        expect(economist.ymdAtEot('something/or/other/2018-09-05')).to.equal('2018-09-05');
     });
 });
