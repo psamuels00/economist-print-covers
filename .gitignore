@@ -4,6 +4,10 @@
 # Vagrant vm
 .vagrant
 
+# Vagrant vm - git config
+vagrant-files/.gitconfig
+vagrant-files/id_rsa
+
 # Logs
 logs
 *.log
