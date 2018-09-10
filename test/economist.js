@@ -1,5 +1,6 @@
 var economist = require('../lib/economist.js');
 var expect = require('chai').expect;
+var sinon = require('sinon');
 
 
 //--------------------------------------------------------------------------------
@@ -10,6 +11,7 @@ var expect = require('chai').expect;
 describe('Test generic support functions', function() {
 
     describe('Test lastPartOfPath() function', function() {
+        const lastPartOfPath = sinon.spy(economist, 'lastPartOfPath');
         it('should return empty string given empty string', function() {
             expect(economist.lastPartOfPath('')).to.equal('');
         });
@@ -22,13 +24,20 @@ describe('Test generic support functions', function() {
         it('should return last part of long path', function() {
             expect(economist.lastPartOfPath('something/or/other/2018-09-05')).to.equal('2018-09-05');
         });
+        it('should be called 4 times', function() {
+            sinon.assert.callCount(lastPartOfPath, 4);
+        });
     });
 
 
     describe('Test indexPageUrl() function', function() {
+        const indexPageUrl = sinon.spy(economist, 'indexPageUrl');
         it('should encode parameters', function() {
             const url = 'https://www.economist.com/printedition/covers?date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
             expect(economist.indexPageUrl(2018)).to.equal(url);
+        });
+        it('should be called 1 time', function() {
+            expect(indexPageUrl.calledOnce).to.be.true;
         });
     });
 
@@ -64,7 +73,7 @@ describe('Test PhantomJS interface', async function() {
         });
     });
 
-    describe('Test fetchPage() function', async function() {
+    describe.skip('Test fetchPage() function', async function() {
         it('should return the page content', async function() {
             const url = 'https://www.economist.com/printedition/covers?date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
             const content = await economist.fetchPage(this.cache.page, url, 'my page')
@@ -98,3 +107,4 @@ describe('Test parse HTML/DOM functions', function() {
     });
 
 });
+
