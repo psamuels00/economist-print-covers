@@ -70,6 +70,17 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
 
+    # Virtual Box Guest Additions
+    apt-get install -y dkms
+    apt-get install -y virtualbox-guest-additions-iso
+
+    # Sync time
+    apt-get install -y ntp
+    timedatectl set-ntp on
+
+    # Set time zone
+    timedatectl set-timezone America/Los_Angeles
+
     # Shell prompt
     if ! grep -q set_prompt ~vagrant/.bashrc; then
         cp /vagrant/vagrant-files/set_prompt.sh ~vagrant/
@@ -93,9 +104,13 @@ Vagrant.configure("2") do |config|
         echo 'cd /vagrant' >> ~vagrant/.bashrc
     fi
 
+    # Binary calculator
+    apt-get install -y bc
+
     # Node and npm
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     apt-get install -y nodejs
+    npm i -g npm
     ## You may also need development tools to build native addons:
     apt-get install -y gcc g++ make
     ## To install the Yarn package manager, run:

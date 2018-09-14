@@ -1,12 +1,12 @@
 REPORTER = spec
 
-all: test
+all: run
 #all: jshint test
-# as of 2018-09-05, jshint does not recognize async/await
 
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter $(REPORTER) --timeout 3000
 
+# as of 2018-09-05, jshint does not recognize async/await
 jshint:
 	jshint lib examples test index.js
 
