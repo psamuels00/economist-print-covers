@@ -11,6 +11,22 @@ chai.use(sinonChai);
 
 
 //--------------------------------------------------------------------------------
+//                               config/constants
+//--------------------------------------------------------------------------------
+
+
+const sampleContent
+    = '<div class="print-cover-image"><a href="/path/2018-09-01"><img src="20180901.jpg" /></a></div>'
+    + '<div class="print-cover-image"><a href="/path/2018-09-08"><img src="20180908.jpg" /></a></div>'
+    + '<div class="print-cover-image"><a href="/path/2018-09-15"><img src="20180915.jpg" /></a></div>';
+const rootPath = __dirname + '/sample';
+
+before(function() {
+    rimraf.sync(rootPath);
+});
+
+
+//--------------------------------------------------------------------------------
 //                               generic support
 //--------------------------------------------------------------------------------
 
@@ -155,18 +171,16 @@ describe('Generic support functions', function() {
 
 
 describe('Cache file functions', function() {
-    const root = __dirname + '/sample';
-    const path = root + '/path/tmpfile.$$$';
+    const path = rootPath + '/path/tmpfile.$$$';
     const file = __dirname + '/tmpfile.$$$';
     const content1 = 'content1';
     const content2 = 'content2';
 
-    before(function() {
-        rimraf.sync(root);
-        rimraf.sync(file);
-    });
-
     describe('saveContentToCacheFile() function', async function() {
+        before(function() {
+            rimraf.sync(file);
+        });
+
         it('should write contents to file in existing directory', function() {
             economist.saveContentToCacheFile(file, content1);
             expect(fs.existsSync(file)).is.true;
@@ -223,10 +237,6 @@ describe('Cache file functions', function() {
             await getFileMtimeMillisStub.restore();
         });
     });
-
-    after(async function() {
-        rimraf.sync(root);
-    });
 });
 
 
@@ -262,7 +272,7 @@ describe('PhantomJS interface', async function() {
     describe('fetchPage() function', async function() {
         it('should return the page content', async function() {
             const url = 'https://www.economist.com/printedition/covers?date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
-            const content = await economist.fetchPage(cache.page, url, 'my page')
+            const content = await economist.fetchPage(cache.page, url)
             expect(content).to.be.a('string');
         });
     });
@@ -281,13 +291,83 @@ describe('PhantomJS interface', async function() {
 describe('Parse HTML/DOM functions', function() {
     describe('parseIndexPage() function', function() {
         it('should return 3 issues', async function() {
-            const content
-                = '<div class="print-cover-image"><a href="/path/2018-09-01"><img src="20180901.jpg" /></a></div>'
-                + '<div class="print-cover-image"><a href="/path/2018-09-08"><img src="20180908.jpg" /></a></div>'
-                + '<div class="print-cover-image"><a href="/path/2018-09-15"><img src="20180915.jpg" /></a></div>';
-            const issues = economist.parseIndexPage(content);
+            const issues = economist.parseIndexPage(sampleContent);
             expect(issues).to.be.an('array').and.to.have.lengthOf(3);
         });
     });
 });
+
+
+//--------------------------------------------------------------------------------
+//                                 process year
+//--------------------------------------------------------------------------------
+
+
+describe('Process year functions', function() {
+    let year = 2018;
+    let page = {};
+
+    let getCurrentYearStub;
+    let fetchPageStub;
+    let cacheFilePathStub;
+    let cacheFilePathOrig = economist.cacheFilePath;
+    let cacheFile = rootPath + '/' + cacheFilePathOrig('index', { year: year });
+    before(async function() {
+        getCurrentYearStub = sinon.stub(economist, 'getCurrentYear').returns(year);
+        fetchPageStub = sinon.stub(economist, 'fetchPage').returns(sampleContent);;
+        cacheFilePathStub = sinon.stub(economist, 'cacheFilePath').returns(cacheFile);
+    });
+
+    describe('loadPageContentFromNet() function', async function() {
+        it('should return content', async function() {
+            const result = await economist.loadPageContentFromNet(year, page)
+            expect(result).to.equal(sampleContent);
+        });
+    });
+
+    describe('loadIndexPageContent() function', async function() {
+        it('should load content from net', async function() {
+            const pageContent = await economist.loadIndexPageContent(year, page);
+            expect(pageContent).to.deep.equal({ source: 'net', data: sampleContent });
+        });
+        it('should store contents to cache', async function() {
+            expect(fs.existsSync(cacheFile)).to.be.true;
+        });
+        it('should load content from cache', async function() {
+            const pageContent = await economist.loadIndexPageContent(year, page);
+            expect(pageContent).to.deep.equal({ source: 'cache', data: sampleContent });
+        });
+    });
+
+    describe('processYear() function', async function() {
+        before(function() {
+            rimraf.sync(rootPath);
+        });
+
+        it('should process year', async function() {
+            const issues = await economist.processYear(page, year);
+            expect(issues).to.be.an('array').and.to.have.lengthOf(3);
+        });
+        it('should create cache files', async function() {
+            expect(fs.existsSync(cacheFile)).to.be.true;
+        });
+    });
+
+    after(async function() {
+        await getCurrentYearStub.restore();
+        await fetchPageStub.restore();
+        await cacheFilePathStub.restore();
+    });
+});
+
+
+//--------------------------------------------------------------------------------
+//                                   cleanup
+//--------------------------------------------------------------------------------
+
+
+after(function() {
+    rimraf.sync(rootPath);
+});
+
 
