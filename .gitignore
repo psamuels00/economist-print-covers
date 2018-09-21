@@ -1,6 +1,7 @@
 _CACHE/
 images/
 output/
+cron/log/
 
 # Vi temporary files
 *.swp
