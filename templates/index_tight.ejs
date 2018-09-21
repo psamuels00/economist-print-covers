@@ -1,0 +1,39 @@
+<html>
+<head>
+    <style type="text/css">
+        body {
+            margin: 20px;
+            font-family: sans-serif;
+        }
+        .year {
+            margin-bottom: 20px;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<%_ for (const year of Object.keys(images).sort().reverse()) { _%>
+    <%_ const issues = images[year]; _%>
+
+    <div class="year">
+        <div class="label"><%= year %></div>
+
+        <%_ for (const ymd of Object.keys(issues).sort()) { _%>
+            <%_ const issue = issues[ymd]; _%>
+
+            <a href="<%= issue.files.LARGE %>"><%#
+                %><img src="<%= issue.files.THUMBNAIL %>" title="<%= issue.displayDate %> issue" /><%#
+            %></a>
+
+        <%_ } _%>
+
+    </div>
+
+<%_ } _%>
+
+</body>
+</html>
+
