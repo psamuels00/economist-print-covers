@@ -1,5 +1,6 @@
 _CACHE/
 images/
+output/
 
 # Vi temporary files
 *.swp
