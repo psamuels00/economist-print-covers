@@ -436,7 +436,7 @@ describe('Process year functions', function() {
 
 
 after(function() {
-    //rimraf.sync(rootPath);
+    rimraf.sync(rootPath);
 });
 
 
