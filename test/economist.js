@@ -15,10 +15,28 @@ chai.use(sinonChai);
 //--------------------------------------------------------------------------------
 
 
-const sampleContent
-    = '<div class="print-cover-image"><a href="/path/2018-09-01"><img src="20180901.jpg" /></a></div>'
-    + '<div class="print-cover-image"><a href="/path/2018-09-08"><img src="20180908.jpg" /></a></div>'
-    + '<div class="print-cover-image"><a href="/path/2018-09-15"><img src="20180915.jpg" /></a></div>';
+const sampleIndexUrl = 'https://www.economist.com/printedition/covers?'
+                     + 'date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
+const imgUrlBase = 'https://www.economist.com/sites/default/files/imagecache/print-cover-thumbnail/print-covers';
+const sampleContent = `
+    <div class="views-print-cover">
+        <a href="/path/2018-09-15"><img src="${imgUrlBase}/20180915_cuk400hires.jpg" /></a>
+        <div><span class="date-display-single">Sep 15 2018</span></div>
+    </div>
+    <div class="views-print-cover">
+        <a href="/path/2018-09-08"><img src="${imgUrlBase}/20180908_cuk400.jpg" /></a>
+        <div><span class="date-display-single">Sep 8 2018</span></div>
+    </div>
+    <div class="views-print-cover">
+        <a href="/path/2018-09-01"><img src="${imgUrlBase}/20180901_cna400.jpg" /></a>
+        <div><span class="date-display-single">Sep 1 2018</span></div>
+    </div>
+`;
+
+const thumbnailImageUrl = 'https://www.economist.com/sites/default/files/imagecache/print-cover-thumbnail/'
+                        + 'print-covers/20180922_cuk400.jpg';
+const sampleImageContent = new Buffer([1, 2, 3, 4, 16]);
+
 const rootPath = __dirname + '/sample';
 
 before(function() {
@@ -53,7 +71,7 @@ describe('Generic support functions', function() {
             expect(spy.callCount).to.equal(4);
         });
         after(async function() {
-            await spy.restore();
+            await economist.lastPartOfPath.restore();
         });
     });
 
@@ -77,17 +95,18 @@ describe('Generic support functions', function() {
 
     describe('indexPageUrl() function', function() {
         it('should encode parameters', function() {
-            const url = 'https://www.economist.com/printedition/covers?date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
-            expect(economist.indexPageUrl(2018)).to.equal(url);
+            expect(economist.indexPageUrl(2018)).to.equal(sampleIndexUrl);
         });
     });
 
     describe('cacheFilePath() function', function() {
         it('should return a valid path for an index page', function() {
-            expect(economist.cacheFilePath('index', { year: 2018 })).to.equal('_CACHE/2018/index.html');
+            expect(economist.cacheFilePath('index', { year: 2018 })).to.equal('_CACHE/2018-covers.html');
         });
-        it('should return a valid path for an issue page');
-        it('should return a valid path for an image');
+        it('should return a valid path for a thumbnail image', function() {
+            const params = { year: 2018, ymd: '2018-09-01', type: 'THUMBNAIL' };
+            expect(economist.cacheFilePath('image', params)).to.equal('images/2018/2018-09-01/thumbnail.jpg');
+        });
     });
 
     describe('getCurrentYear() function', function() {
@@ -158,7 +177,7 @@ describe('Generic support functions', function() {
             }).to.throw('has invalid \'mtimeMs\'');
         });
         it('should return the last modification time of a file in milliseconds', async function() {
-            await statSyncStub.restore();
+            await fs.statSync.restore();
             expect(economist.getFileMtimeMillis(__filename)).to.be.gt(1536796800000);
         });
     });
@@ -176,24 +195,24 @@ describe('Cache file functions', function() {
     const content1 = 'content1';
     const content2 = 'content2';
 
-    describe('saveContentToCacheFile() function', async function() {
+    describe('saveContentToFile() function', async function() {
         before(function() {
             rimraf.sync(file);
         });
 
         it('should write contents to file in existing directory', function() {
-            economist.saveContentToCacheFile(file, content1);
+            economist.saveContentToFile(file, content1);
             expect(fs.existsSync(file)).is.true;
             fs.unlinkSync(file);
         });
         it('should write contents to file in new directory', function() {
-            economist.saveContentToCacheFile(path, content1);
+            economist.saveContentToFile(path, content1);
             expect(fs.existsSync(path)).is.true;
         });
         it('should overwrite contents of existing file and update mtime', function(done) {
             const mtimeMs1 = economist.getFileMtimeMillis(path);
             setTimeout(function() {
-                economist.saveContentToCacheFile(path, content2);
+                economist.saveContentToFile(path, content2);
                 const mtimeMs2 = economist.getFileMtimeMillis(path);
                 expect(mtimeMs2).to.be.above(mtimeMs1);
                 done();
@@ -234,7 +253,7 @@ describe('Cache file functions', function() {
 
         after(async function() {
             await clock.restore();
-            await getFileMtimeMillisStub.restore();
+            await economist.getFileMtimeMillis.restore();
         });
     });
 });
@@ -271,8 +290,7 @@ describe('PhantomJS interface', async function() {
 
     describe('fetchPage() function', async function() {
         it('should return the page content', async function() {
-            const url = 'https://www.economist.com/printedition/covers?date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980';
-            const content = await economist.fetchPage(cache.page, url)
+            const content = await economist.fetchPage(cache.page, sampleIndexUrl)
             expect(content).to.be.a('string');
         });
     });
@@ -284,13 +302,28 @@ describe('PhantomJS interface', async function() {
 
 
 //--------------------------------------------------------------------------------
+//                                fetch image
+//--------------------------------------------------------------------------------
+
+
+describe('Fetch image', async function() {
+    describe('fetchImage() function', async function() {
+        it('should return an image file contents', async function() {
+            const content = await economist.fetchImage(thumbnailImageUrl)
+            expect(content.toString('hex', 0, 6)).to.equal('ffd8ffe00010');
+        });
+    });
+});
+
+
+//--------------------------------------------------------------------------------
 //                               parse HTML/DOM
 //--------------------------------------------------------------------------------
 
 
 describe('Parse HTML/DOM functions', function() {
     describe('parseIndexPage() function', function() {
-        it('should return 3 issues', async function() {
+        it('should return 3 issues', function() {
             const issues = economist.parseIndexPage(sampleContent);
             expect(issues).to.be.an('array').and.to.have.lengthOf(3);
         });
@@ -304,18 +337,22 @@ describe('Parse HTML/DOM functions', function() {
 
 
 describe('Process year functions', function() {
-    let year = 2018;
-    let page = {};
+    const year = 2018;
+    const ymd = '2018-09-01';
+    const type = 'THUMBNAIL';
+    const page = {};
 
     let getCurrentYearStub;
     let fetchPageStub;
-    let cacheFilePathStub;
-    let cacheFilePathOrig = economist.cacheFilePath;
-    let cacheFile = rootPath + '/' + cacheFilePathOrig('index', { year: year });
+    let fetchImageStub;
+    const cacheFilePathOrig = economist.cacheFilePath;
     before(async function() {
         getCurrentYearStub = sinon.stub(economist, 'getCurrentYear').returns(year);
         fetchPageStub = sinon.stub(economist, 'fetchPage').returns(sampleContent);;
-        cacheFilePathStub = sinon.stub(economist, 'cacheFilePath').returns(cacheFile);
+        fetchImageStub = sinon.stub(economist, 'fetchImage').returns(sampleImageContent);
+        economist.cacheFilePath = function(...args) {
+            return rootPath + '/' + cacheFilePathOrig(...args);
+        };
     });
 
     describe('loadPageContentFromNet() function', async function() {
@@ -331,11 +368,40 @@ describe('Process year functions', function() {
             expect(pageContent).to.deep.equal({ source: 'net', data: sampleContent });
         });
         it('should store contents to cache', async function() {
-            expect(fs.existsSync(cacheFile)).to.be.true;
+            const isFile = fs.existsSync(economist.cacheFilePath('index', { year }));
+            expect(isFile).to.be.true;
         });
         it('should load content from cache', async function() {
             const pageContent = await economist.loadIndexPageContent(year, page);
             expect(pageContent).to.deep.equal({ source: 'cache', data: sampleContent });
+        });
+    });
+
+    describe('getImage() function', async function() {
+        it('should fetch and store image', async function() {
+            await economist.getImage(year, ymd, thumbnailImageUrl, type);
+            const file = economist.cacheFilePath('image', { year, ymd, type });
+            expect(fs.existsSync(file)).to.be.true;
+        });
+        it('should not fetch image again', async function() {
+            const callCount = fetchImageStub.callCount;
+            await economist.getImage(year, ymd, thumbnailImageUrl, type);
+            expect(fetchImageStub.callCount).to.equal(callCount);
+        });
+    });
+
+    describe('getIssueImages() function', async function() {
+        it('should fetch and save the medium and large images', async function() {
+            const issue = { ymd, displayDate: '', thumbnailImageUrl };
+            let images = {};
+            await economist.getIssueImages(year, issue, images);
+            const isThumbnail = fs.existsSync(
+                economist.cacheFilePath('image', { year, ymd, type: 'THUMBNAIL' }));
+            const isMedium = fs.existsSync(
+                economist.cacheFilePath('image', { year, ymd, type: 'MEDIUM' }));
+            const isLarge = fs.existsSync(
+                economist.cacheFilePath('image', { year, ymd, type: 'LARGE' }));
+            expect(isThumbnail && isMedium && isLarge).to.be.true;
         });
     });
 
@@ -345,18 +411,21 @@ describe('Process year functions', function() {
         });
 
         it('should process year', async function() {
-            const issues = await economist.processYear(page, year);
+            let images = {};
+            const issues = await economist.processYear(page, year, images);
             expect(issues).to.be.an('array').and.to.have.lengthOf(3);
         });
-        it('should create cache files', async function() {
-            expect(fs.existsSync(cacheFile)).to.be.true;
+        it('should create cache files', function() {
+            const isThumbnail = fs.existsSync(
+                economist.cacheFilePath('image', { year, ymd, type: 'THUMBNAIL' }));
+            expect(isThumbnail).to.be.true;
         });
     });
 
     after(async function() {
-        await getCurrentYearStub.restore();
-        await fetchPageStub.restore();
-        await cacheFilePathStub.restore();
+        await economist.getCurrentYear.restore();
+        await economist.fetchPage.restore();
+        economist.cacheFilePath = cacheFilePathOrig;
     });
 });
 
@@ -367,7 +436,7 @@ describe('Process year functions', function() {
 
 
 after(function() {
-    rimraf.sync(rootPath);
+    //rimraf.sync(rootPath);
 });
 
 
