@@ -1,6 +1,6 @@
 {
   "name": "economist",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Copy and make single index of all Economist cover images.",
   "main": "index.js",
   "directories": {
