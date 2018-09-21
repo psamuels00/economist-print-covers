@@ -8,6 +8,8 @@
 // v0.2.0      fetch index page for current year and display thumbnail image url for each issue
 // v0.3.0      cache index page with daily expiration
 // v0.4.0      fetch images for each issue
+// v0.5.0      generate index pages
+// v0.6.0      load all years
 
 const economist = require('./lib/economist.js');
 economist.run();
