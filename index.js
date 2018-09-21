@@ -10,6 +10,7 @@
 // v0.4.0      fetch images for each issue
 // v0.5.0      generate index pages
 // v0.6.0      load all years
+// v0.7.0      create cron job and log file summarizer
 
 const economist = require('./lib/economist.js');
 economist.run();
