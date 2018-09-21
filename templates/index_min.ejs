@@ -8,19 +8,19 @@
 </head>
 <body>
 
-<%_ for (const year of Object.keys(images).sort().reverse()) { _%>
-    <%_ const issues = images[year]; _%>
+<%_ for (const year of Object.keys(images).sort().reverse()) { _%><%#
+    %><%_ const issues = images[year]; _%><%#
 
-    <%_ for (const ymd of Object.keys(issues).sort()) { _%>
-        <%_ const issue = issues[ymd]; _%>
+    %><%_ for (const ymd of Object.keys(issues).sort()) { _%><%#
+        %><%_ const issue = issues[ymd]; _%><%#
 
-        <a href="<%= issue.files.LARGE %>"><%#
+        %><a href="<%= issue.files.LARGE %>"><%#
             %><img src="<%= issue.files.THUMBNAIL %>" title="<%= issue.displayDate %> issue" /><%#
-        %></a>
+        %></a><%#
 
-    <%_ } _%>
+    %><%_ } _%><%#
 
-<%_ } _%>
+%><%_ } _%>
 
 </body>
 </html>
