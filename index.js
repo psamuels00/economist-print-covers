@@ -11,6 +11,7 @@
 // v0.5.0      generate index pages
 // v0.6.0      load all years
 // v0.7.0      create cron job and log file summarizer
+// v0.7.1      update README markdown
 
 const economist = require('./lib/economist.js');
 economist.run();
