@@ -11,9 +11,12 @@
         .label {
             font-weight: bold;
         }
+        <%- include('header_css') %>
     </style>
 </head>
 <body>
+
+<%- include('header', { current: 'tight' }) %>
 
 <%_ for (const year of Object.keys(images).sort().reverse()) { _%>
     <%_ const issues = images[year]; _%>

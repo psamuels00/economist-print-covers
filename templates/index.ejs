@@ -22,9 +22,12 @@
             color: black;
             margin: 5px 0px;
         }
+        <%- include('header_css') %>
     </style>
 </head>
 <body>
+
+<%- include('header', { current: 'labeled' }) %>
 
 <%_ for (const year of Object.keys(images).sort().reverse()) { _%>
     <%_ const issues = images[year]; _%>

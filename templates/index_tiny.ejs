@@ -4,12 +4,15 @@
         body {
             margin: 10px;
         }
+        img {
+            width: 25px;
+        }
         <%- include('header_css') %>
     </style>
 </head>
 <body>
 
-<%- include('header', { current: 'min' }) %>
+<%- include('header', { current: 'tiny' }) %>
 
 <%_ for (const year of Object.keys(images).sort().reverse()) { _%><%#
     %><%_ const issues = images[year]; _%><%#
