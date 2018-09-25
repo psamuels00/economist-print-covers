@@ -260,43 +260,16 @@ describe('Cache file functions', function() {
 
 
 //--------------------------------------------------------------------------------
-//                        virtual browser - PhantomJS
+//                               fetch page
 //--------------------------------------------------------------------------------
 
 
-describe('PhantomJS interface', async function() {
-    this.timeout(30000);
-
-    let cache;
-    before(async function() {
-        cache = {};
-    });
-
-    describe('initBrowserInstance() function', async function() {
-        it('should create an instance', async function() {
-            const instance = await economist.initBrowserInstance(economist.phantom);
-            expect(instance).to.be.an('object');
-            cache.instance = instance;
-        });
-    });
-
-    describe('initBrowserPage() function', async function() {
-        it('should create a page', async function() {
-            const page = await economist.initBrowserPage(cache.instance);
-            expect(page).to.be.an('object');
-            cache.page = page;
-        });
-    });
-
+describe('Fetch page', async function() {
     describe('fetchPage() function', async function() {
         it('should return the page content', async function() {
-            const content = await economist.fetchPage(cache.page, sampleIndexUrl)
+            const content = await economist.fetchPage(sampleIndexUrl)
             expect(content).to.be.a('string');
         });
-    });
-
-    after(async function() {
-        await cache.instance.exit();
     });
 });
 
@@ -340,7 +313,6 @@ describe('Process year functions', function() {
     const year = 2018;
     const ymd = '2018-09-01';
     const type = 'THUMBNAIL';
-    const page = {};
 
     let getCurrentYearStub;
     let fetchPageStub;
@@ -357,14 +329,14 @@ describe('Process year functions', function() {
 
     describe('loadPageContentFromNet() function', async function() {
         it('should return content', async function() {
-            const result = await economist.loadPageContentFromNet(year, page)
+            const result = await economist.loadPageContentFromNet(year)
             expect(result).to.equal(sampleContent);
         });
     });
 
     describe('loadIndexPageContent() function', async function() {
         it('should load content from net', async function() {
-            const pageContent = await economist.loadIndexPageContent(year, page);
+            const pageContent = await economist.loadIndexPageContent(year);
             expect(pageContent).to.deep.equal({ source: 'net', data: sampleContent });
         });
         it('should store contents to cache', async function() {
@@ -372,7 +344,7 @@ describe('Process year functions', function() {
             expect(isFile).to.be.true;
         });
         it('should load content from cache', async function() {
-            const pageContent = await economist.loadIndexPageContent(year, page);
+            const pageContent = await economist.loadIndexPageContent(year);
             expect(pageContent).to.deep.equal({ source: 'cache', data: sampleContent });
         });
     });
@@ -412,7 +384,7 @@ describe('Process year functions', function() {
 
         it('should process year', async function() {
             let images = {};
-            const issues = await economist.processYear(page, year, images);
+            const issues = await economist.processYear(year, images);
             expect(issues).to.be.an('array').and.to.have.lengthOf(3);
         });
         it('should create cache files', function() {
