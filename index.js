@@ -14,7 +14,8 @@
 // v0.7.1      update README markdown
 // v0.8.0      replace phantom with jsdom
 // v0.8.1      generate tiny index and headers
+// v0.9.0      break lib into component libs
 
-const economist = require('./lib/economist.js');
+const economist = require('./lib/Economist.js');
 economist.run();
 
