@@ -33,7 +33,7 @@ describe('Cache file functions', function() {
                 statSyncStub = sinon.stub(fs, 'statSync');
             });
             it('should return undefined for a non-existent file', function() {
-                expect(cache.getFileMtimeMillis(file)).to.be.undefined
+                expect(cache.getFileMtimeMillis(file)).to.be.undefined;
             });
             it('should throw an error if the stat has no mtimeMs property', function() {
                 statSyncStub.returns({});
@@ -103,7 +103,7 @@ describe('Cache file functions', function() {
             const timeoutMs = timeoutSec * 1000;
 
             let clock;
-            let fileMs
+            let fileMs;
             let getFileMtimeMillisStub;
             before(function() {
                 clock = sinon.useFakeTimers((new Date('2018-09-14')).getTime());

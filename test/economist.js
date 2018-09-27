@@ -40,7 +40,7 @@ describe('Process year functions', function() {
 
     describe('loadPageContentFromNet() function', async function() {
         it('should return content', async function() {
-            const result = await economist.loadPageContentFromNet(year)
+            const result = await economist.loadPageContentFromNet(year);
             expect(result).to.equal(config.sampleContent);
         });
     });
