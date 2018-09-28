@@ -25,32 +25,30 @@ describe('Process year functions', function() {
     const ymd = '2018-09-01';
     const type = 'THUMBNAIL';
 
-    let getCurrentYearStub;
-    let fetchPageStub;
     let fetchImageStub;
     const cacheFilePathOrig = cache.cacheFilePath;
-    before(async function() {
-        getCurrentYearStub = sinon.stub(util, 'getCurrentYear').returns(year);
-        fetchPageStub = sinon.stub(fetch, 'fetchPage').returns(config.sampleContent);;
+    before(function() {
+        sinon.stub(util, 'getCurrentYear').returns(year);
+        sinon.stub(fetch, 'fetchPage').returns(config.sampleContent);
         fetchImageStub = sinon.stub(fetch, 'fetchImage').returns(config.sampleImageContent);
         cache.cacheFilePath = function(...args) {
             return config.rootPath + '/' + cacheFilePathOrig(...args);
         };
     });
 
-    describe('loadPageContentFromNet() function', async function() {
+    describe('loadPageContentFromNet() function', function() {
         it('should return content', async function() {
             const result = await economist.loadPageContentFromNet(year);
             expect(result).to.equal(config.sampleContent);
         });
     });
 
-    describe('loadIndexPageContent() function', async function() {
+    describe('loadIndexPageContent() function', function() {
         it('should load content from net', async function() {
             const pageContent = await economist.loadIndexPageContent(year);
             expect(pageContent).to.deep.equal({ source: 'net', data: config.sampleContent });
         });
-        it('should store contents to cache', async function() {
+        it('should store contents to cache', function() {
             const isFile = fs.existsSync(cache.cacheFilePath('index', { year }));
             expect(isFile).to.be.true;
         });
@@ -60,7 +58,7 @@ describe('Process year functions', function() {
         });
     });
 
-    describe('getImage() function', async function() {
+    describe('getImage() function', function() {
         it('should fetch and store image', async function() {
             await economist.getImage(year, ymd, config.thumbnailImageUrl, type);
             const file = cache.cacheFilePath('image', { year, ymd, type });
@@ -73,22 +71,22 @@ describe('Process year functions', function() {
         });
     });
 
-    describe('getIssueImages() function', async function() {
+    describe('getIssueImages() function', function() {
         it('should fetch and save the medium and large images', async function() {
             const issue = { ymd, displayDate: '', thumbnailImageUrl: config.thumbnailImageUrl };
             let images = {};
             await economist.getIssueImages(year, issue, images);
-            const isThumbnail = fs.existsSync(
-                cache.cacheFilePath('image', { year, ymd, type: 'THUMBNAIL' }));
-            const isMedium = fs.existsSync(
-                cache.cacheFilePath('image', { year, ymd, type: 'MEDIUM' }));
-            const isLarge = fs.existsSync(
-                cache.cacheFilePath('image', { year, ymd, type: 'LARGE' }));
-            expect(isThumbnail && isMedium && isLarge).to.be.true;
+
+            let isFile = {};
+            for (let ucType of [ 'THUMBNAIL', 'MEDIUM', 'LARGE' ]) {
+                const file = cache.cacheFilePath('image', { year, ymd, type: ucType });
+                isFile[ucType] = fs.existsSync(file);
+            }
+            expect(isFile.THUMBNAIL && isFile.MEDIUM && isFile.LARGE).to.be.true;
         });
     });
 
-    describe('processYear() function', async function() {
+    describe('processYear() function', function() {
         before(function() {
             rimraf.sync(config.rootPath);
         });
@@ -99,8 +97,8 @@ describe('Process year functions', function() {
             expect(issues).to.be.an('array').and.to.have.lengthOf(3);
         });
         it('should create cache files', function() {
-            const isThumbnail = fs.existsSync(
-                cache.cacheFilePath('image', { year, ymd, type: 'THUMBNAIL' }));
+            const file = cache.cacheFilePath('image', { year, ymd, type: 'THUMBNAIL' });
+            const isThumbnail = fs.existsSync(file);
             expect(isThumbnail).to.be.true;
         });
     });

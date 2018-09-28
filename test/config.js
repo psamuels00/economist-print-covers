@@ -1,11 +1,13 @@
 'use strict';
 
+const path = require('path');
+
 const imgUrlBase = 'https://www.economist.com/sites/default/files/imagecache/print-cover-thumbnail/print-covers';
 
 module.exports = {
     sampleIndexUrl:
-        'https://www.economist.com/printedition/covers?' +
-        'date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980',
+        'https://www.economist.com/printedition/covers?'
+        + 'date_filter%5Bvalue%5D%5Byear%5D=2018&print_region=76980',
 
     sampleContent: `
         <div class="views-print-cover">
@@ -23,13 +25,13 @@ module.exports = {
         `,
 
     thumbnailImageUrl:
-        'https://www.economist.com/sites/default/files/imagecache/print-cover-thumbnail/' +
-        'print-covers/20180922_cuk400.jpg',
+        'https://www.economist.com/sites/default/files/imagecache/print-cover-thumbnail/'
+        + 'print-covers/20180922_cuk400.jpg',
 
     sampleImageContent:
-        new Buffer([1, 2, 3, 4, 16]),
+        Buffer.from([ 1, 2, 3, 4, 16 ]),
 
     rootPath:
-        __dirname + '/sample',
+        path.join(__dirname, 'sample'),
 };
 

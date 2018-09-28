@@ -8,9 +8,9 @@ chai.use(sinonChai);
 
 const rimraf = require('rimraf');
 const fs = require('fs');
+const path = require('path');
 
 const cache = require('../lib/Cache.js');
-const config = require('./config.js');
 
 describe('Cache file functions', function() {
 
@@ -68,37 +68,37 @@ describe('Cache file functions', function() {
     });
 
     describe('public functions', function() {
-        const path = config.rootPath + '/path/tmpfile.$$$';
-        const file = __dirname + '/tmpfile.$$$';
+        const filePath = path.join(__dirname, 'path', 'tmpfile.$$$');
+        const fileRoot = path.join(__dirname, 'tmpfile.$$$');
         const content1 = 'content1';
         const content2 = 'content2';
 
-        describe('saveContentToFile() function', async function() {
+        describe('saveContentToFile() function', function() {
             before(function() {
-                rimraf.sync(file);
+                rimraf.sync(fileRoot);
             });
 
             it('should write contents to file in existing directory', function() {
-                cache.saveContentToFile(file, content1);
-                expect(fs.existsSync(file)).is.true;
-                fs.unlinkSync(file);
+                cache.saveContentToFile(fileRoot, content1);
+                expect(fs.existsSync(fileRoot)).is.true;
+                fs.unlinkSync(fileRoot);
             });
             it('should write contents to file in new directory', function() {
-                cache.saveContentToFile(path, content1);
-                expect(fs.existsSync(path)).is.true;
+                cache.saveContentToFile(filePath, content1);
+                expect(fs.existsSync(filePath)).is.true;
             });
             it('should overwrite contents of existing file and update mtime', function(done) {
-                const mtimeMs1 = cache.getFileMtimeMillis(path);
+                const mtimeMs1 = cache.getFileMtimeMillis(filePath);
                 setTimeout(function() {
-                    cache.saveContentToFile(path, content2);
-                    const mtimeMs2 = cache.getFileMtimeMillis(path);
+                    cache.saveContentToFile(filePath, content2);
+                    const mtimeMs2 = cache.getFileMtimeMillis(filePath);
                     expect(mtimeMs2).to.be.above(mtimeMs1);
                     done();
                 }, 500);
             });
         });
 
-        describe('loadContentFromCacheFile() function', async function() {
+        describe('loadContentFromCacheFile() function', function() {
             const timeoutSec = 3600 * 24; // one day
             const timeoutMs = timeoutSec * 1000;
 
@@ -113,20 +113,20 @@ describe('Cache file functions', function() {
             });
 
             it('should return undefined for a non-existent file', function() {
-                expect(cache.loadContentFromCacheFile(file)).to.be.undefined;
+                expect(cache.loadContentFromCacheFile(fileRoot)).to.be.undefined;
             });
             it('should return undefined for a non-existent, expirable file', function() {
-                expect(cache.loadContentFromCacheFile(file, 3600)).to.be.undefined;
+                expect(cache.loadContentFromCacheFile(fileRoot, 3600)).to.be.undefined;
             });
-            it('should return file contents for file not yet expired', async function() {
-                expect(cache.loadContentFromCacheFile(path, timeoutSec)).to.equal(content2);
+            it('should return file contents for file not yet expired', function() {
+                expect(cache.loadContentFromCacheFile(filePath, timeoutSec)).to.equal(content2);
             });
-            it('should return undefined for an expired file', async function() {
+            it('should return undefined for an expired file', function() {
                 clock.tick(1);
-                expect(cache.loadContentFromCacheFile(path, timeoutSec)).to.be.undefined;
+                expect(cache.loadContentFromCacheFile(filePath, timeoutSec)).to.be.undefined;
             });
             it('should return file contents for non-expiring file', function() {
-                expect(cache.loadContentFromCacheFile(path)).to.equal(content2);
+                expect(cache.loadContentFromCacheFile(filePath)).to.equal(content2);
             });
 
             after(async function() {
