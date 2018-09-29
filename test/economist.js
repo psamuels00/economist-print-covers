@@ -8,6 +8,7 @@ chai.use(sinonChai);
 
 const rimraf = require('rimraf');
 const fs = require('fs');
+const path = require('path');
 
 const cache = require('../lib/Cache.js');
 const config = require('./config.js');
@@ -32,7 +33,7 @@ describe('Process year functions', function() {
         sinon.stub(fetch, 'fetchPage').returns(config.sampleContent);
         fetchImageStub = sinon.stub(fetch, 'fetchImage').returns(config.sampleImageContent);
         cache.cacheFilePath = function(...args) {
-            return config.rootPath + '/' + cacheFilePathOrig(...args);
+            return path.join(config.rootPath, cacheFilePathOrig(...args));
         };
     });
 

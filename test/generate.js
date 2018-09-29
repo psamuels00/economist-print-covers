@@ -7,18 +7,19 @@ chai.use(sinonChai);
 
 const rimraf = require('rimraf');
 const fs = require('fs');
+const path = require('path');
 
 const config = require('./config.js');
 const generate = require('../lib/Generate.js');
 
 describe('Generate index file functions', function() {
-    const outputPath = config.rootPath + '/output';
+    const outputPath = path.join(config.rootPath, 'output');
     const generateIndexFileOrig = generate.generateIndexFile;
 
     before(function() {
         rimraf.sync(outputPath);
         generate.generateIndexFile = function(images, templateFile, outputFile) {
-            return generateIndexFileOrig(images, templateFile, config.rootPath + '/' + outputFile);
+            return generateIndexFileOrig(images, templateFile, path.join(config.rootPath, outputFile));
         };
     });
 

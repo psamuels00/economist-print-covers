@@ -11,6 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 const cache = require('../lib/Cache.js');
+const config = require('./config.js');
 
 describe('Cache file functions', function() {
 
@@ -68,7 +69,7 @@ describe('Cache file functions', function() {
     });
 
     describe('public functions', function() {
-        const filePath = path.join(__dirname, 'path', 'tmpfile.$$$');
+        const filePath = path.join(config.rootPath, 'newpath', 'tmpfile.$$$');
         const fileRoot = path.join(__dirname, 'tmpfile.$$$');
         const content1 = 'content1';
         const content2 = 'content2';
