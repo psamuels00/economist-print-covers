@@ -21,8 +21,9 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "mocha",
-    "run": "make run"
+    "start": "node index.js",
+    "lint": "eslint index.js lib test",
+    "test": "npm run lint && mocha"
   },
   "repository": {
     "type": "git",

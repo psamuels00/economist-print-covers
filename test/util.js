@@ -10,24 +10,24 @@ const config = require('./config.js');
 const util = require('../lib/Util.js');
 
 describe('Generic support functions', function() {
-    describe('lastPartOfPath() function', async function() {
+    describe('lastPartOfPath() function', function() {
         let spy;
         before(function() {
-             spy = sinon.spy(util, 'lastPartOfPath');
+            spy = sinon.spy(util, 'lastPartOfPath');
         });
-        it('should return empty string given empty string', async function() {
+        it('should return empty string given empty string', function() {
             expect(util.lastPartOfPath('')).to.equal('');
         });
-        it('should return empty string given no slash', async function() {
+        it('should return empty string given no slash', function() {
             expect(util.lastPartOfPath('2018-09-05')).to.equal('');
         });
-        it('should return last part of trivial path', async function() {
+        it('should return last part of trivial path', function() {
             expect(util.lastPartOfPath('/2018-09-05')).to.equal('2018-09-05');
         });
-        it('should return last part of long path', async function() {
+        it('should return last part of long path', function() {
             expect(util.lastPartOfPath('something/or/other/2018-09-05')).to.equal('2018-09-05');
         });
-        it('should be called 4 times', async function() {
+        it('should be called 4 times', function() {
             expect(spy.callCount).to.equal(4);
             // just testing spy functionality...
             // of course this doesn't increase confidence in lastPartOfPath()
@@ -66,10 +66,10 @@ describe('Generic support functions', function() {
         before(function() {
             clock = sinon.useFakeTimers(new Date('2018-09-12'));
         });
-        it('should return the current year, as if it is 2018', async function() {
+        it('should return the current year, as if it is 2018', function() {
             expect(util.getCurrentYear()).to.equal(2018);
         });
-        it('should return last year', async function() {
+        it('should return last year', function() {
             clock.tick(-365 * 24 * 60 * 60 * 1000);
             expect(util.getCurrentYear()).to.equal(2017);
         });
@@ -78,15 +78,15 @@ describe('Generic support functions', function() {
         });
     });
 
-    describe('getCurrentTimeMillis() function', async function() {
+    describe('getCurrentTimeMillis() function', function() {
         let clock;
         before(function() {
             clock = sinon.useFakeTimers(0);
         });
-        it('should return the current time in milliseconds', async function() {
+        it('should return the current time in milliseconds', function() {
             expect(util.getCurrentTimeMillis()).to.equal(0);
         });
-        it('should return the current time in milliseconds after 23ms', async function() {
+        it('should return the current time in milliseconds after 23ms', function() {
             clock.tick(23);
             expect(util.getCurrentTimeMillis()).to.equal(23);
         });
