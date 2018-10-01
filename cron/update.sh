@@ -42,7 +42,7 @@ transfer_files() {
 
 #--------------------------------------------
 
-process() {
+process_start_and_stop() {
     if ! start_vm; then
         return 1
     elif ! execute_vm; then
@@ -52,6 +52,18 @@ process() {
         halt_vm
         return 1
     elif ! halt_vm; then
+        return 1
+    fi
+}
+
+process() {
+    if ! VBoxManage showvminfo economist | grep -q running; then
+        if ! process_start_and_stop; then
+            return 1
+        fi
+    elif ! execute_vm; then
+        return 1
+    elif ! transfer_files; then
         return 1
     fi
 }
