@@ -17,8 +17,8 @@
     %><%_ for (const ymd of Object.keys(issues).sort()) { _%><%#
         %><%_ const issue = issues[ymd]; _%><%#
 
-        %><a href="<%= issue.files.LARGE %>"><%#
-            %><img src="<%= issue.files.THUMBNAIL %>" title="<%= issue.displayDate %> issue" /><%#
+        %><a href="<%= issue.urls.LARGE %>"><%#
+            %><img src="<%= issue.urls.THUMBNAIL %>" title="<%= issue.displayDate %> issue" /><%#
         %></a><%#
 
     %><%_ } _%><%#
