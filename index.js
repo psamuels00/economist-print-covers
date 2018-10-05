@@ -15,6 +15,7 @@
 // v0.8.0      replace phantom with jsdom
 // v0.8.1      generate tiny index and headers
 // v0.9.0      break lib into component libs
+// v1.0.0      update README files and generally tidy up
 
 const economist = require('./lib/Economist.js');
 const program = require('./lib/Program.js');
