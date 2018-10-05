@@ -95,6 +95,10 @@ Vagrant.configure("2") do |config|
     cp -r /vagrant/vagrant-files/.vim* ~/
     cp -r /vagrant/vagrant-files/.vim* ~vagrant/
     chown -R vagrant:vagrant ~vagrant/.vim*
+    if ! grep -q EDITOR ~vagrant/.bashrc; then
+        echo >> ~vagrant/.bashrc
+        echo 'export EDITOR=vim' >> ~vagrant/.bashrc
+    fi
 
     # Git setup
     cp  /vagrant/vagrant-files/.gitconfig ~vagrant/
