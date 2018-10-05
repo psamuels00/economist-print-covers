@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------
-// The Economist Cover Image Displayer
+// The Economist Print Covers
 //
 // 2018-??-??  Initial script written in Perl, based on fetching and parsing HTML.
 // 2018-??-??  One week later, the Economist Web site was upgraded and returned Javascript instead of HTML.
@@ -17,5 +17,17 @@
 // v0.9.0      break lib into component libs
 
 const economist = require('./lib/Economist.js');
-economist.run();
+const program = require('./lib/Program.js');
+
+function main() {
+    const { showHelp, useRemoteImages } = program.getProgramArgs();
+
+    if (showHelp) {
+        program.showHelp();
+    } else {
+        economist.run(useRemoteImages);
+    }
+}
+
+main();
 
