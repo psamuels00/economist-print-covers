@@ -1,7 +1,0 @@
-#-------------------------------------------------------
-# to run on plato, using Pacific Time Zone...
-#-------------------------------------------------------
-
-# check for new Economist covers and update index files weekly on Friday at 2am
-0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
-
