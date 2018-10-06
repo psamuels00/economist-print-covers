@@ -57,7 +57,7 @@ process_start_and_stop() {
 }
 
 process() {
-    if ! VBoxManage showvminfo economist | grep -q running; then
+    if ! VBoxManage showvminfo economist-print-covers | grep -q running; then
         if ! process_start_and_stop; then
             return 1
         fi
@@ -88,7 +88,7 @@ process_and_log() {
 }
 
 main() {
-    cd /Users/perrin/save/data/projects/economist
+    cd /Users/perrin/save/data/projects/economist-print-covers
     mkdir -p cron/log
     process_and_log
     cd - > /dev/null

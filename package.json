@@ -1,5 +1,5 @@
 {
-  "name": "economist",
+  "name": "economist-print-covers",
   "version": "1.0.1",
   "description": "The Economist Print Covers",
   "main": "index.js",
@@ -27,15 +27,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/psamuels00/economist.git"
+    "url": "git+https://github.com/psamuels00/economist-print-covers.git"
   },
   "keywords": [
-    "economist"
+    "economist",
+    "newspaper",
+    "print",
+    "cover",
+    "wall",
+    "mural"
   ],
   "author": "Perrin Samuels <perrin.samuels@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/psamuels00/economist/issues"
+    "url": "https://github.com/psamuels00/economist-print-covers/issues/"
   },
-  "homepage": "https://github.com/psamuels00/economist#readme"
+  "homepage": "https://github.com/psamuels00/economist-print-covers/"
 }

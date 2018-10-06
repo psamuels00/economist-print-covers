@@ -178,7 +178,7 @@ machine may not be running, the cron job is scheduled on my host machine.  The c
 looks like this:
 
     # check for new Economist cover images and update index files weekly on Friday at 2am
-    0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
+    0 2 * * 5 /Users/perrin/save/data/projects/economist-print-covers/cron/update.sh
 
 This script will execute our Node program on the guest machine and then transfer
 newly fetched images and updated output files to the hosted account.  If the guest
@@ -204,7 +204,7 @@ installed on the host.  I set up a Bash function to do this on my host machine b
 adding the following to my .bashrc file:
 
     econsum () {
-        local DIR=~/save/data/projects/economist;
+        local DIR=~/save/data/projects/economist-print-covers
         ( cd $DIR/cron; ./summarize.pl $@ )
     }
 
@@ -226,6 +226,15 @@ Each "#" represents a minute, each "." represents a second.
 **Notice**: You will probably want to modify the cron job, update.sh, to suit your needs.  At a minimum,
 you will need to update paths to match the location of your project directory and credentials
 credentials for transferring files to a hosted service.
+
+Also, the update script assumes the name of your vm is "economist-print-covers".  To make
+sure it has this name, shut down the vm and then execute a command like the following:
+
+    VBoxManage modifyvm economist-print-covers_default_1538802269797_55551 --name economist-print-covers
+
+...but replace the long name above with the name of your vm, which you can find using this command:
+
+    VBoxManage list vms
 
 ## Options
 
