@@ -2,7 +2,9 @@
 
 Fetch all available print cover images from The Economist Web site and generate
 a comprehensive index of all the print covers on a single page.  See sample
-generated files [here](examples/).
+generated files [here][eg].
+
+[eg]: http://htmlpreview.github.io/?https://github.com/psamuels00/economist-print-covers/blob/master/examples/index.html
 
 * [How it works](#how-it-works)
 * [Motivation](#motivation)
@@ -28,7 +30,7 @@ cache looks like this:
           :
           └── 20??-covers.html   # expires in 24 hours
 
-##### Saved images
+#### Saved images
 
 For each available print edition, 3 different sizes of the cover image are
 fetched and saved to an `images` directory.  For example:
@@ -40,7 +42,8 @@ fetched and saved to an `images` directory.  For example:
                       ├── medium.jpg
                       └── thumbnail.jpg
 
-##### Generated index files
+#### Generated index files
+
 After all the print editions index pages are processed (ie, for every available year),
 the following set of index files are generated or overwritten:
 
@@ -62,15 +65,17 @@ to allow easy navigation between the variations.
 
 ## Motivation
 
-![The Economist Wall][http://lsatruler.com/the_economist/EconomistWall.jpg]
-
-I love [The Economist](http://economist.com).
+I love [The Economist](http://economist.com) newspaper.
 Years ago I installed an Economist mural in my living room, made from a selection of
-print covers I've been saving for years.  Due to limited space, it was hard to visualize the entire mural
+print covers I've been saving for years.
+
+![The Economist Wall Mural](http://lsatruler.com/the_economist/EconomistWallMural.jpg)
+
+Due to limited space, it was hard to visualize the entire mural
 at once before settling on a design and hanging up all the selected covers.  Then it was hard to change,
 either the selection or position of covers.  I've since replaced the Economist mural with something else
 (Häagen Dazs lids!), but still saving Economist print covers with the aim of making another mural again
-in the future.
+one day.
 
 The next time I make an Economist mural, I want it to be easier to design.  Instead of dealing directly
 with the physical printer covers and wall, I will instead manipulate images of the print covers on
@@ -101,7 +106,7 @@ Javascript
 * JSDom - "execute" page and parse HTML
 * EJS (Embedded Javascript Templates) - generate index files
 
-Javascript - for testing
+Testing Javascript
 * ESLint - validate Javascript code
 * Mocha - testing framework
 * Chai - BDD-style assertions
@@ -122,7 +127,7 @@ Automation
 You will need to have Virtual Box and Vagrant already installed.  To get started,
 execute the following from the project directory:
 
-    `vagrant up`
+    vagrant up
 
 This will spin up and provision the virtual machine.  Provisioning includes updating
 and installing several packages on the guest machine.  It also configures the Bash
@@ -130,32 +135,36 @@ prompt and vi editor settings for the default user (vagrant) and root using file
 the `vagrant-files` directory.  After provisioning is complete, sign into the guest
 machine as follows:
 
-    `vagrant ssh`
+    vagrant ssh
 
 This lands you in the `/vagrant` directory, which is synced with the project
 directory on the host machine.  Next, install all the Node project dependcies:
 
-    `npm install`
+    npm install
 
 To run the tests:
 
-    `npm test`, or
-    `mocha`
+    npm test
+_or_
+
+    mocha
 
 To run the program:
 
-    `npm start`, or
-    `node index`
+    npm start
+_or_
+
+    node index
 
 To log out of the guest machine and shut it down:
 
-    `exit`
-    `vagrant halt`
+    exit (or ^D)
+    vagrant halt
 
 All the images are now in the `images` directory, and the generated, consolidated index
 files are in the `output` directory.  To load the index on a Mac, try this:
 
-    `open output/index.html`
+    open output/index.html
 
 ##### Automation
 
@@ -168,10 +177,8 @@ a virtual machine.  Therefore, the cron job must run locally for me.  Since the 
 machine may not be running, the cron job is scheduled on my host machine.  The crontab entry
 looks like this:
 
-````
-# check for new Economist cover images and update index files weekly on Friday at 2am
-0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
-````
+    # check for new Economist cover images and update index files weekly on Friday at 2am
+    0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
 
 This script will execute our Node program on the guest machine and then transfer
 newly fetched images and updated output files to the hosted account.  If the guest
@@ -189,36 +196,32 @@ each time the cron job runs.  The status log file is accumulative, tracking each
 execution using two lines: one when the job started and another when it ended.
 To see a summary of executions, try this:
 
-    `cd cron`
-    `./summarize.pl`
+    cd cron
+    ./summarize.pl
 
 The summarize program can be run from the guest or host machine, assuming Perl is
 installed on the host.  I set up a Bash function to do this on my host machine by
 adding the following to my .bashrc file:
 
-    ````
     econsum () {
         local DIR=~/save/data/projects/economist;
         ( cd $DIR/cron; ./summarize.pl $@ )
     }
-    ````
 
 Now to get a summary of the 5 most recent executions, type this from any directory:
 
-    `econsum 5`
+    econsum 5
 
 This generates output such as the following:
 
-    ````
     ECONOMIST
     2018-09-07  2am    -> 03m 03s    ###...
     2018-09-14  2am    -> 03m 14s    ###..............ERROR
     2018-09-21  2am    -> 03m 24s    ###........................
     2018-09-28  2am    -> 02m 05s    ##.....
     2018-10-05  2am    -> 01m 05s    #.....
-    ````
 
-Each `#` represents a minute, each `.` represents a second.
+Each "#" represents a minute, each "." represents a second.
 
 **Notice**: You will probably want to modify the cron job, update.sh, to suit your needs.  At a minimum,
 you will need to update paths to match the location of your project directory and credentials
@@ -228,11 +231,11 @@ credentials for transferring files to a hosted service.
 
 There is only one option at this time:
 
-    `node index.js -r`
+    node index.js -r
 
-When the 'remote' option is included, references in the generated index files are made to
+When the _remote_ option is included, references in the generated index files are made to
 the original (remote) images hosted by The Economist rather than the copies (local) that
 are fetched.  This option was added to generate index pages that will work from anywhere,
 even without a local copy of all the images.  This option was enabled to generate the
-index files in the `examples/` directory.
+index files in the [examples](examples) directory.
 
