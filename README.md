@@ -69,7 +69,7 @@ I love [The Economist](http://economist.com) newspaper.
 Years ago I installed an Economist mural in my living room, made from a selection of
 print covers I've been saving for years.
 
-![The Economist Wall Mural](http://lsatruler.com/the_economist/EconomistWallMural.jpg)
+![The Economist Wall Mural](EconomistWallMural.jpg)
 
 Due to limited space, it was hard to visualize the entire mural
 at once before settling on a design and hanging up all the selected covers.  Then it was hard to change,
