@@ -2,15 +2,13 @@
 
 This directory contains a couple files of primary interest:
 
-    `update.sh`
-    `summarize.pl`
+    update.sh
+    summarize.pl
 
 The Bash script is intended to be scheduled as a cron job.  For example:
 
-````
-# check for new Economist cover images and update index files weekly on Friday at 2am
-0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
-````
+    # check for new Economist cover images and update index files weekly on Friday at 2am
+    0 2 * * 5 /Users/perrin/save/data/projects/economist/cron/update.sh
 
 When run, it creates a `log` directory and logs its execution there.  The Perl script
 parses the status log file and summarizes executions of the cron job.  The log file
