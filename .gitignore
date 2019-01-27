@@ -3,6 +3,8 @@ images/
 output/
 cron/log/
 
+latest_issue
+
 # Vi temporary files
 *.swp
 
