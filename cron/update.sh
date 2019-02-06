@@ -33,19 +33,27 @@ halt_vm() {
     fi
 }
 
+transfer_files() {
+    if ! rsync -avz -e 'ssh -p 2222' images output/* psamuels@lsatruler.com:public_html/the_economist; then
+        2>&1 echo "Error transferring files: $?"
+        return 1
+    fi
+}
+
 update_latest_link() {
     local latest_year=$(ls images | tail -1)
     local latest_ymd=$(ls images/$latest_year | tail -1)
     local latest_issue=images/$latest_year/$latest_ymd
+
+    # update local link
     rm -f latest_issue
     ln -s $latest_issue latest_issue
-}
 
-transfer_files() {
-    if ! rsync -avz -e 'ssh -p 2222' latest_issue images output/* psamuels@lsatruler.com:public_html/the_economist; then
-        2>&1 echo "Error transferring files: $?"
-        return 1
-    fi
+    # update remote link
+    ssh -p 2222 psamuels@lsatruler.com "
+        cd public_html/the_economist;
+        rm -f latest_issue;
+        ln -s $latest_issue latest_issue"
 }
 
 #--------------------------------------------
@@ -56,10 +64,10 @@ process_start_and_stop() {
     elif ! execute_vm; then
         halt_vm
         return 1
-    elif ! update_latest_link; then
+    elif ! transfer_files; then
         halt_vm
         return 1
-    elif ! transfer_files; then
+    elif ! update_latest_link; then
         halt_vm
         return 1
     elif ! halt_vm; then
@@ -68,15 +76,23 @@ process_start_and_stop() {
 }
 
 process() {
+    if ! transfer_files; then
+        return 1
+    elif ! update_latest_link; then
+        return 1
+    fi
+}
+
+xprocess() {
     if ! VBoxManage showvminfo economist-print-covers | grep -q running; then
         if ! process_start_and_stop; then
             return 1
         fi
     elif ! execute_vm; then
         return 1
-    elif ! update_latest_link; then
-        return 1
     elif ! transfer_files; then
+        return 1
+    elif ! update_latest_link; then
         return 1
     fi
 }
