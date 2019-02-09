@@ -76,14 +76,6 @@ process_start_and_stop() {
 }
 
 process() {
-    if ! transfer_files; then
-        return 1
-    elif ! update_latest_link; then
-        return 1
-    fi
-}
-
-xprocess() {
     if ! VBoxManage showvminfo economist-print-covers | grep -q running; then
         if ! process_start_and_stop; then
             return 1
