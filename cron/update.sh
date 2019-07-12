@@ -26,13 +26,6 @@ execute_vm() {
 }
 
 
-halt_vm() {
-    if ! vagrant halt; then
-        2>&1 echo "Error halting vm: $?"
-        return 1
-    fi
-}
-
 transfer_files() {
     if ! rsync -avz -e 'ssh -p 2222' images output/* psamuels@lsatruler.com:public_html/the_economist; then
         2>&1 echo "Error transferring files: $?"
@@ -54,6 +47,13 @@ update_latest_link() {
         cd public_html/the_economist;
         rm -f latest_issue;
         ln -s $latest_issue latest_issue"
+}
+
+halt_vm() {
+    if ! vagrant halt; then
+        2>&1 echo "Error halting vm: $?"
+        return 1
+    fi
 }
 
 #--------------------------------------------
